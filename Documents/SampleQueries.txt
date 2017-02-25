@@ -54,3 +54,47 @@ Also there may be situation that you have found sub collection based on some fil
 
 NOTE: In above query $ representing the grade which qualify score=14 and will show that in result
 
+
+
+--OPERATORS in MongoDb
+
+	$.and
+	> db.restaurants.find( {borough:"Bronx", restaurant_id:'30075445'})
+	In above example query , is acting just like $.and
+	
+	$.or
+	> db.restaurants.find({ $or: [{borough:"Bronx"}, {restaurant_id:'30075445'}]})
+	In above query we are filtering records by borough filter or restaurant_id filter
+	
+		Similarly, we can also apply projection while using $.or operator
+		> db.restaurants.find({ $or: [{borough:"Bronx"}, {restaurant_id:'30075445'}]},{'borough':1,'name':1})
+		
+	Soring of records
+	> db.restaurants.find({ $or: [{borough:"Bronx"}, {restaurant_id:'30075445'}]},{'borough':1,'name':1}).sort({'name':1})
+	above result will show you sorting records by name in ascending
+	(In case of Characters 1 is Ascending and -1 is descending but in case of Numerics 1 is descending and -1 ascending)
+	
+	
+	$.gt (greater than operator)
+	> db.restaurants.find({ 'grades.score': {$gt:10},'grades.grade':'A'},{'grades':1} )
+	Above query filter all records based on having score greater than 10 and with grade = 'A'
+	
+	$.elemMatch (Elem match is again a operator which allows us to operate on sub-collection or sub-document of each document separately
+	> db.restaurants.find({grades:{$elemMatch:{ 'score': {$gt:10},'grade':'A'}}},{'grades':1} ).count()
+	
+	$.lt $.lte (less than equal)
+	db.restaurants.find({grades:{$elemMatch:{ 'score': {$gt:10},'grade':'A'}}},{'grades.$':1} ).sort({'grades.score':-1})
+	
+	$.ne (not equal to)
+	db.restaurants.find({grades:{$elemMatch:{ 'score': {$gt:10},'grade': {$ne:'A'}}}},{'grades.$':1} ).sort({'grades.score':-1})
+	The above query will filter all those records of which grade is not equal to Above
+	
+	
+	$.exists
+	> db.restaurants.find({"cuisine":{$exists:true}}).count()
+	Above query will search for records having cuisine attribute set or is not empty
+	> db.restaurants.find({"cuisine":{$exists:false}}).count()
+	Above query will search for records having cuisine attribute not set
+	
+Inserting a new record into collection
+  > db.restaurants.insert({name: "Shivendra",grades: []})
