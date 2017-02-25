@@ -1,0 +1,56 @@
+MongoDb Queries Example:
+
+- Collection -> Table in Sql
+- Document -> Record in table as in sql
+- Projections -> like select section as in sql (to select specific attributes)
+
+
+We have "test" as database
+
+- Its having one collection as restaurents ( it can also be called as table in terms of SQL)
+- its having total 25359 records/ documents
+
+
+Query to count number of records in one collection
+
+ > db.restaurants.count()
+
+Query to find count on basis of any filter of attribute
+
+ > db.restaurants.find({ borough: "Bronx"}).count()
+
+Query to see a record filtered and projection has been set on it
+
+ > db.restaurants.find({ borough: "Bronx"},{grades: 1})[1]
+
+Query to have count of records with multiple filters
+
+ > db.restaurants.find({ borough: "Bronx", name: "Morris Park Bake Shop"}).count()
+
+Lets have some coding within Mongo Shell which looks just similar to javascript:
+
+ > var restuarantByBorough = db.restaurants.find({ borough: "Bronx"})
+
+   Then you can further query on restuarantByBorough collection
+  
+   > restuarantByBorough.count()  --this will give you count of filtered records
+
+   Then you can also apply a loop on this filtered collection to print something on console itself
+ 
+   >  for (var x=0; x<=restuarantByBorough.count(); x++) { print(restuarantByBorough[x].name) }
+
+
+Lets see another example of filtering record on basis of nested collection in records 
+
+ > db.restaurants.find({ 'address.building': "1007" }).count()
+
+   And if I just wanted to see all records with filtered parameter and to select only specific attribute of a nested collection
+
+   > db.restaurants.find({ 'address.building': "1007" },{'address.building':1})
+
+Also there may be situation that you have found sub collection based on some filter but there are other collections coming out as a result and you want to see only the specific one which qualify your filter
+
+ > db.restaurants.find({'grades.score':14},{'grades.$':1})[1]
+
+NOTE: In above query $ representing the grade which qualify score=14 and will show that in result
+
