@@ -1,0 +1,100 @@
+MongoDb Queries Example:
+
+- Collection -> Table in Sql
+- Document -> Record in table as in sql
+- Projections -> like select section as in sql (to select specific attributes)
+
+
+We have "test" as database
+
+- Its having one collection as restaurents ( it can also be called as table in terms of SQL)
+- its having total 25359 records/ documents
+
+
+Query to count number of records in one collection
+
+ > db.restaurants.count()
+
+Query to find count on basis of any filter of attribute
+
+ > db.restaurants.find({ borough: "Bronx"}).count()
+
+Query to see a record filtered and projection has been set on it
+
+ > db.restaurants.find({ borough: "Bronx"},{grades: 1})[1]
+
+Query to have count of records with multiple filters
+
+ > db.restaurants.find({ borough: "Bronx", name: "Morris Park Bake Shop"}).count()
+
+Lets have some coding within Mongo Shell which looks just similar to javascript:
+
+ > var restuarantByBorough = db.restaurants.find({ borough: "Bronx"})
+
+   Then you can further query on restuarantByBorough collection
+  
+   > restuarantByBorough.count()  --this will give you count of filtered records
+
+   Then you can also apply a loop on this filtered collection to print something on console itself
+ 
+   >  for (var x=0; x<=restuarantByBorough.count(); x++) { print(restuarantByBorough[x].name) }
+
+
+Lets see another example of filtering record on basis of nested collection in records 
+
+ > db.restaurants.find({ 'address.building': "1007" }).count()
+
+   And if I just wanted to see all records with filtered parameter and to select only specific attribute of a nested collection
+
+   > db.restaurants.find({ 'address.building': "1007" },{'address.building':1})
+
+Also there may be situation that you have found sub collection based on some filter but there are other collections coming out as a result and you want to see only the specific one which qualify your filter
+
+ > db.restaurants.find({'grades.score':14},{'grades.$':1})[1]
+
+NOTE: In above query $ representing the grade which qualify score=14 and will show that in result
+
+
+
+--OPERATORS in MongoDb
+
+	$.and
+	> db.restaurants.find( {borough:"Bronx", restaurant_id:'30075445'})
+	In above example query , is acting just like $.and
+	
+	$.or
+	> db.restaurants.find({ $or: [{borough:"Bronx"}, {restaurant_id:'30075445'}]})
+	In above query we are filtering records by borough filter or restaurant_id filter
+	
+		Similarly, we can also apply projection while using $.or operator
+		> db.restaurants.find({ $or: [{borough:"Bronx"}, {restaurant_id:'30075445'}]},{'borough':1,'name':1})
+		
+	Soring of records
+	> db.restaurants.find({ $or: [{borough:"Bronx"}, {restaurant_id:'30075445'}]},{'borough':1,'name':1}).sort({'name':1})
+	above result will show you sorting records by name in ascending
+	(In case of Characters 1 is Ascending and -1 is descending but in case of Numerics 1 is descending and -1 ascending)
+	
+	
+	$.gt (greater than operator)
+	> db.restaurants.find({ 'grades.score': {$gt:10},'grades.grade':'A'},{'grades':1} )
+	Above query filter all records based on having score greater than 10 and with grade = 'A'
+	
+	$.elemMatch (Elem match is again a operator which allows us to operate on sub-collection or sub-document of each document separately
+	> db.restaurants.find({grades:{$elemMatch:{ 'score': {$gt:10},'grade':'A'}}},{'grades':1} ).count()
+	
+	$.lt $.lte (less than equal)
+	db.restaurants.find({grades:{$elemMatch:{ 'score': {$gt:10},'grade':'A'}}},{'grades.$':1} ).sort({'grades.score':-1})
+	
+	$.ne (not equal to)
+	db.restaurants.find({grades:{$elemMatch:{ 'score': {$gt:10},'grade': {$ne:'A'}}}},{'grades.$':1} ).sort({'grades.score':-1})
+	The above query will filter all those records of which grade is not equal to Above
+	
+	
+	$.exists
+	> db.restaurants.find({"cuisine":{$exists:true}}).count()
+	Above query will search for records having cuisine attribute set or is not empty
+	> db.restaurants.find({"cuisine":{$exists:false}}).count()
+	Above query will search for records having cuisine attribute not set
+	
+Inserting a new record into collection
+  > db.restaurants.insert({name: "Shivendra",grades: []})

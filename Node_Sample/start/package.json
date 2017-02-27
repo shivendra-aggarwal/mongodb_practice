@@ -1,0 +1,11 @@
+{
+"name": "mongodb-practice-nodejs",
+"version": "1.0.0",
+"description": "generates a test json file for use by mongodb",
+"main":"app.js",
+"dependencies":{
+	"async": "^0.9.2",
+	"mongodb": "^1.4.40"
+}
+
+}
